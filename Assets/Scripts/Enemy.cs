@@ -18,5 +18,9 @@ public class Enemy : MonoBehaviour
         //플레이어를 추적
         Vector3 lookDirection = (player.transform.position - transform.position).normalized;
         enemyRb.AddForce(lookDirection * speed);
+
+        //떨어진 적 삭제
+        if (transform.position.y < - 10)
+            Destroy(gameObject);
     }
 }
