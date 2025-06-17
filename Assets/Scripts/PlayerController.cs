@@ -1,10 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     public float speed = 5.0f;          //이동 속도
     public bool hasPowerup;             //플레이어 파워업 적용 여부
-
+    public GameObject powerupIndicator; //파워업 이펙트
 
     private float powerupStrength = 15.0f;  //파워업 수치
 
@@ -23,6 +24,9 @@ public class PlayerController : MonoBehaviour
         //플레이어 이동
         //카메라 회전에따라서 플레이어 방향 초기화
         playerRb.AddForce(focalPoint.transform.forward * speed * fowardInput);
+
+        //파워업 이펙트 생성
+        powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
     }
 
     //플레이어 - 파워업 충돌
@@ -32,6 +36,8 @@ public class PlayerController : MonoBehaviour
         {
             hasPowerup = true;
             Destroy(other.gameObject);
+            StartCoroutine(PowerupCountdownRoutine());
+            powerupIndicator.gameObject.SetActive(true);
         }
     }
 
@@ -49,5 +55,13 @@ public class PlayerController : MonoBehaviour
             //적에게 순간 힘 주기
             enemyRigidbody.AddForce(awayFromPlayer * powerupStrength, ForceMode.Impulse);
         }
+    }
+
+    //파워업 유효시간 후 이펙트 삭제
+    IEnumerator PowerupCountdownRoutine()
+    {
+        yield return new WaitForSeconds(7);
+        hasPowerup = false;
+        powerupIndicator.gameObject.SetActive(false);
     }
 }
